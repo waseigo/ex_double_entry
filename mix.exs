@@ -26,6 +26,7 @@ defmodule ExDoubleEntry.MixProject do
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(:test_mysql), do: ["lib", "test/support"]
+  defp elixirc_paths(:test_sqlite3), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
   defp deps do
@@ -33,10 +34,13 @@ defmodule ExDoubleEntry.MixProject do
       {:jason, "~> 1.2"},
       {:money, "~> 1.9"},
       {:ecto_sql, "~> 3.7"},
+      {:ecto_sqlite3, ">= 0.0.0", optional: true},
+      {:exqlite, ">= 0.0.0", optional: true},
       {:postgrex, ">= 0.0.0", optional: true},
       {:myxql, ">= 0.0.0", optional: true},
-      {:ex_machina, "~> 2.7", only: [:test, :test_mysql]},
-      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
+      {:ex_machina, "~> 2.7", only: [:test, :test_mysql, :test_sqlite3]},
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
+      {:credo, "~> 1.7", only: :dev}
     ]
   end
 
