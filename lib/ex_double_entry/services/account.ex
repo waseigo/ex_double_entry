@@ -1,4 +1,34 @@
 defmodule ExDoubleEntry.Account do
+  @moduledoc """
+  Defines the struct and operations for accounts.
+
+  ## Struct fields
+
+  - `:id` - Optional internal ID (from the database).
+  - `:identifier` - Required unique identifier for the account (atom or string).
+  - `:scope` - Optional scope to differentiate accounts (e.g., user-specific).
+  - `:currency` - Required currency code (e.g., `:USD`).
+  - `:balance` - Optional current balance as a `%Money{}` struct.
+  - `:positive_only?` - Flag indicating if the account balance must remain non-negative.
+
+  ## Key functions
+
+  - `present/1`: Converts an `%AccountBalance{}` schema or `nil` to an `%Account{}` struct.
+  - `lookup!/2`: Retrieves an existing `%Account{}` by identifier and options (e.g., currency, scope). Raises `ExDoubleEntry.Account.NotFoundError` if not found.
+  - `make!/2`: Creates a new `%Account{}` with zero balance, enforcing required fields and configuration.
+
+  ## Configuration dependencies
+
+  - Uses `:default_currency` from `:ex_double_entry` application config.
+  - Checks `:accounts` config for `:positive_only` flag per identifier.
+
+  ## Exceptions
+
+  - `ExDoubleEntry.Account.NotFoundError`: Raised when an account is not found.
+  - `ExDoubleEntry.Account.InvalidScopeError`: Raised for invalid scopes (e.g., empty string).
+
+  See `ExDoubleEntry.AccountBalance` for balance-related operations and `ExDoubleEntry.Transfer` for transfers between accounts.
+  """
   @enforce_keys [:identifier, :currency]
   defstruct [:id, :identifier, :scope, :currency, :balance, :positive_only?]
 
@@ -52,9 +82,15 @@ defmodule ExDoubleEntry.Account do
 end
 
 defmodule ExDoubleEntry.Account.NotFoundError do
+  @moduledoc """
+  Raised when an account is not found.
+  """
   defexception message: "Account not found."
 end
 
 defmodule ExDoubleEntry.Account.InvalidScopeError do
+  @moduledoc """
+  Raised for invalid scopes (empty string).
+  """
   defexception message: "Invalid scope: empty string not allowed."
 end
