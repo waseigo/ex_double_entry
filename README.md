@@ -10,6 +10,7 @@ An Elixir double-entry library inspired by Ruby's [DoubleEntry](https://github.c
 
 - Postgres 9.4+ (for `JSONB` support)
 - MySQL 8.0+ (for row locking support)
+- SQLite3 (database locking, WAL mode)
 
 ## Installation
 
@@ -20,6 +21,9 @@ def deps do
     # pick one DB package
     {:postgrex, ">= 0.0.0"},
     {:myxql, ">= 0.0.0"},
+    {:exqlite, ">= 0.0.0"},
+    # for SQLite3 also add Ecto SQLite3:
+    {:ecto_sqlite3, ">= 0.0.0"}
   ]
 end
 ```
@@ -71,10 +75,8 @@ config :ex_double_entry,
 ```elixir
 # creates a new account with 0 balance
 ExDoubleEntry.make_account!(
-  # identifier of the account, in atom
-  :savings,
-  # currency can be any arbitrary atom
-  currency: :USD,
+  :savings, # identifier of the account, in atom
+  currency: :USD, # currency can be any arbitrary atom
   # optional, scope can be any arbitrary string
   #
   # due to DB index on `NULL` values, scope value can only be `nil` (stored as
@@ -158,6 +160,10 @@ ExDoubleEntry.lock_accounts([account_a, account_b], fn ->
   # perform other tasks that should be committed atomically with the transfer
 end)
 ```
+
+### Locking and SQLite3
+
+SQLite3 is supported but **does not offer row-level locking**. Instead, it uses **database-level locking**, serializing all write operations. When using SQLite3 (configured with `db: :sqlite3`), `lock_accounts/2` and `transfer!/1` rely on Write-Ahead Logging (WAL) mode to ensure atomicity through transaction serialization. This is sufficient for low-concurrency environments (e.g., development, testing, or single-user applications). For high-concurrency production systems, prefer Postgres (9.4+) or MySQL (8.0+).
 
 ## License
 
