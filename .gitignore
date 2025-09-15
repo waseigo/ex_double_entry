@@ -26,3 +26,6 @@ ex_double_entry-*.tar
 /tmp/
 
 mix.lock
+
+# SQLite files
+*.db*
