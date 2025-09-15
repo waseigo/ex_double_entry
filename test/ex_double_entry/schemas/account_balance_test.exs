@@ -116,6 +116,7 @@ defmodule ExDoubleEntry.AccountBalanceTest do
       [acc_a: acc_a, acc_b: acc_b]
     end
 
+    @tag :requires_locking
     test "multiple locks", %{acc_a: acc_a, acc_b: acc_b} do
       tasks =
         for i <- 0..4 do
@@ -128,6 +129,7 @@ defmodule ExDoubleEntry.AccountBalanceTest do
       assert Enum.reduce(tasks, 0, fn {:ok, n}, acc -> acc + n end) == 10
     end
 
+    @tag :requires_locking
     test "failed locks", %{acc_a: acc_a, acc_b: acc_b} do
       [
         Task.async(fn ->
