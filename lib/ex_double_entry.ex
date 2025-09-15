@@ -1,6 +1,6 @@
 defmodule ExDoubleEntry do
-  @db_table_prefix Application.fetch_env!(:ex_double_entry, :db_table_prefix)
-  @repo Application.fetch_env!(:ex_double_entry, :repo)
+  @db_table_prefix Application.compile_env(:ex_double_entry, :db_table_prefix, nil)
+  @repo Application.compile_env(:ex_double_entry, :repo, ExDoubleEntry.Repo)
 
   def db_table_prefix, do: @db_table_prefix
 
@@ -26,7 +26,7 @@ defmodule ExDoubleEntry do
   ## Examples
 
   iex> [ExDoubleEntry.make_account!(:savings)] |> ExDoubleEntry.lock_accounts(fn -> true end)
-  {:ok, true}
+  `{:ok, true}`
   """
   defdelegate lock_accounts(accounts, fun), to: ExDoubleEntry.AccountBalance, as: :lock_multi!
 
@@ -34,14 +34,11 @@ defmodule ExDoubleEntry do
   ## Examples
 
   iex> %ExDoubleEntry.Transfer{
-  iex>   money: Money.new(42, :USD),
-  iex>   from: %ExDoubleEntry.Account{identifier: :checking, currency: :USD, balance: Money.new(42, :USD), positive_only?: false},
-  iex>   to: %ExDoubleEntry.Account{identifier: :savings, currency: :USD, balance: Money.new(0, :USD)},
-  iex>   code: :deposit
-  iex> }
-  iex> |> ExDoubleEntry.transfer!()
-  iex> |> Tuple.to_list()
-  iex> |> List.first()
+  ...>   money: Money.new(42, :USD),
+  ...>   from: %ExDoubleEntry.Account{identifier: :checking, currency: :USD, balance: Money.new(42, :USD), positive_only?: false},
+  ...>   to: %ExDoubleEntry.Account{identifier: :savings, currency: :USD, balance: Money.new(0, :USD)},
+  ...>   code: :deposit
+  ...> } |> ExDoubleEntry.transfer!() |> Tuple.to_list() |> List.first()
   :ok
   """
   defdelegate transfer!(transfer), to: ExDoubleEntry.Transfer, as: :perform!
