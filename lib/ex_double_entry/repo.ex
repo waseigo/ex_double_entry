@@ -1,7 +1,9 @@
 defmodule ExDoubleEntry.Repo do
-  @db Application.fetch_env!(:ex_double_entry, :db)
+  @moduledoc false
+  @db Application.compile_env(:ex_double_entry, :db, :postgres)
 
   @db_adapter (case @db do
+                 :sqlite3 -> Ecto.Adapters.SQLite3
                  :postgres -> Ecto.Adapters.Postgres
                  :mysql -> Ecto.Adapters.MyXQL
                end)
