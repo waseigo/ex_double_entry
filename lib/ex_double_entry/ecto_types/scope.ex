@@ -1,5 +1,6 @@
 if Code.ensure_loaded?(Ecto.Type) do
   defmodule ExDoubleEntry.EctoType.Scope do
+    @moduledoc false
     if macro_exported?(Ecto.Type, :__using__, 1) do
       use Ecto.Type
     else
