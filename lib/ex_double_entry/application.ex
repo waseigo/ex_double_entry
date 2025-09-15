@@ -1,13 +1,13 @@
 defmodule ExDoubleEntry.Application do
+  @moduledoc false
   use Application
 
   @impl true
   def start(_type, _args) do
     children =
-      with {:ok, repos} <- Application.fetch_env(:ex_double_entry, :ecto_repos) do
+      case Application.fetch_env(:ex_double_entry, :ecto_repos) do
         # ecto_repos are only required for development and test
-        repos
-      else
+        {:ok, repos} -> repos
         _ -> []
       end
 
